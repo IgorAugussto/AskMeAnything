@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - ${WSRS_DATABASE_PORT:-5432}:5432
+    environment:
+      POSTGRES_USER: ${WSRS_DATABASE_USER}
+      POSTGRES_PASSWORD: ${WSRS_DATABASE_PASSWORD}
+      POSTGRES_DB: ${WSRS_DATABASE_NAME}
+    volumes:
+      - db:/var/lib/postgresql/data
+
+#Pgadmin o client do postgres, como se fosse uma interface para usar o banco de dados
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      #Lado esquerdo é porta fora do container e do lado direito a porta do lado de dentro do container
+      - 8081:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+
+#Geralmente quando derrubamos um container, tudo que está escrito nele também é apagado, sendo assim nós vamos criar volumes para
+#que as informações do banco de dados não sejam apagada.
+volumes:
+  db:
+    driver: local
+  pgadmin:
+    driver: local
