@@ -1,0 +1,2 @@
+go generate ./... - Atualiza as pastas com as queries
+docker compose start - Inicializa o docker e permite que ainda seja possível usar cmd para outros comandos
